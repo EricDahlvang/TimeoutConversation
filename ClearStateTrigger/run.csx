@@ -13,8 +13,7 @@ public static async Task Run(TimerInfo myTimer, ILogger log)
 {
     log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
-   new ClearConversationStateService().ClearExpiredConversations();
-
+   await new ClearConversationStateService().ClearExpiredConversations();
 }
 
 public class ClearConversationStateService

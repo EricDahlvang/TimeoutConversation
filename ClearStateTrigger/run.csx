@@ -80,7 +80,7 @@ public class ClearConversationStateService
                         await _conversationState.SaveChangesAsync(turnContext, cancellationToken: cancellationToken);
                     }, CancellationToken.None);
 
-                    documentClient.DeleteDocumentAsync(dynamicDoc._self);
+                    await documentClient.DeleteDocumentAsync(dynamicDoc._self);
                 }
             }
         }

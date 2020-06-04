@@ -76,8 +76,12 @@ public class ClearConversationStateService
                     var timeoutConveration = (TimeoutConversationReference)dynamicDoc;
                     await (_adapter as BotAdapter).ContinueConversationAsync(_botId, timeoutConveration.ConversationReference, async (turnContext, cancellationToken) => 
                     {
-                        await dialogStateProperty.DeleteAsync(turnContext, cancellationToken);
-                        await _conversationState.SaveChangesAsync(turnContext, cancellationToken: cancellationToken);
+                        await turnContext.SendActivityAsync("Are you still there?");
+
+                        // NOTE: Uncommend below to clear the dialog stack
+                        
+                        // await dialogStateProperty.DeleteAsync(turnContext, cancellationToken);
+                        // await _conversationState.SaveChangesAsync(turnContext, cancellationToken: cancellationToken);
                     }, CancellationToken.None);
 
                     await documentClient.DeleteDocumentAsync(dynamicDoc._self);

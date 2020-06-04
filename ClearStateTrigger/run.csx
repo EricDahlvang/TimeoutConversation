@@ -13,8 +13,20 @@ using Microsoft.Bot.Connector.Authentication;
 public static async Task Run(TimerInfo myTimer, ILogger log)
 {
     log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+    
+    var cosmosUri = Environment.GetEnvironmentVariable("CosmosUri");
+    var cosmosKey = Environment.GetEnvironmentVariable("CosmosKey");
+    var databaseId = Environment.GetEnvironmentVariable("CosmosDb");
+    var stateCollection = Environment.GetEnvironmentVariable("ComosDbStateContainer");
+    var timeoutCollection = Environment.GetEnvironmentVariable("ComosDbTimeoutContainer");
+    var timeoutSeconds = int.Parse(Environment.GetEnvironmentVariable("ConversationTimeoutSeconds"));
+    var botId = Environment.GetEnvironmentVariable("MicrosoftAppId");
+    var appPassword = Environment.GetEnvironmentVariable("MicrosoftAppPassword");
 
-   await new ClearConversationStateService().ClearExpiredConversations();
+    var clearConversationStateService = new ClearConversationStateService(cosmosUri, cosmosKey, databaseId, stateCollection, timeoutCollection, timeoutSeconds, botId, appPassword);
+    await clearConversationStateService.ClearExpiredConversations();
+
+    log.LogInformation($"C# Timer trigger function completed at: {DateTime.Now}");
 }
 
 public class ClearConversationStateService
@@ -30,17 +42,15 @@ public class ClearConversationStateService
     readonly ConversationState _conversationState;
     readonly BotFrameworkAdapter _adapter;
 
-    public ClearConversationStateService()
+    public ClearConversationStateService(string cosmosUri, string cosmosKey, string databaseId, string stateCollection, string timeoutCollection, int timeoutSeconds, string botId, string appPassword)
     {
-        _cosmosUri = Environment.GetEnvironmentVariable("CosmosUri");
-        _cosmosKey = Environment.GetEnvironmentVariable("CosmosKey");
-        _databaseId = Environment.GetEnvironmentVariable("CosmosDb");
-        _stateCollection = Environment.GetEnvironmentVariable("ComosDbStateContainer");
-        _timeoutCollection = Environment.GetEnvironmentVariable("ComosDbTimeoutContainer");
-        _timeoutSeconds = int.Parse(Environment.GetEnvironmentVariable("ConversationTimeoutSeconds"));
-
-        _botId = Environment.GetEnvironmentVariable("MicrosoftAppId");
-        var appPassword = Environment.GetEnvironmentVariable("MicrosoftAppPassword");
+        _cosmosUri = cosmosUri;
+        _cosmosKey = cosmosKey;
+        _databaseId = databaseId;
+        _stateCollection = stateCollection;
+        _timeoutCollection = timeoutCollection;
+        _timeoutSeconds = timeoutSeconds;
+        _botId = botId;
 
         var options = new CosmosDbPartitionedStorageOptions()
             {
@@ -76,10 +86,10 @@ public class ClearConversationStateService
                     var timeoutConveration = (TimeoutConversationReference)dynamicDoc;
                     await (_adapter as BotAdapter).ContinueConversationAsync(_botId, timeoutConveration.ConversationReference, async (turnContext, cancellationToken) => 
                     {
-                        await turnContext.SendActivityAsync("Are you still there?");
+                        await turnContext.SendActivityAsync("Hello.  Are you still there?  Please provide the requested information.");
 
-                        // NOTE: Uncommend below to clear the dialog stack
-                        
+                        // NOTE: Uncommend below to clear the conversation state
+
                         // await dialogStateProperty.DeleteAsync(turnContext, cancellationToken);
                         // await _conversationState.SaveChangesAsync(turnContext, cancellationToken: cancellationToken);
                     }, CancellationToken.None);
@@ -92,17 +102,17 @@ public class ClearConversationStateService
 
 public class TimeoutConversationReference
 {
-        public TimeoutConversationReference(ConversationReference conversationReference)
-        {
-            this.ConversationReference = conversationReference;
-            this.Id = conversationReference.Conversation.Id;
-            this.LastAccessed = DateTime.UtcNow;
-        }
+    public TimeoutConversationReference(ConversationReference conversationReference)
+    {
+        this.ConversationReference = conversationReference;
+        this.Id = conversationReference.Conversation.Id;
+        this.LastAccessed = DateTime.UtcNow;
+    }
 
-        [Newtonsoft.Json.JsonProperty(PropertyName = "id")]
-        public virtual string Id { get; set; }
-        
-        public DateTime LastAccessed { get; set; }
+    [Newtonsoft.Json.JsonProperty(PropertyName = "id")]
+    public virtual string Id { get; set; }
+    
+    public DateTime LastAccessed { get; set; }
 
-        public ConversationReference ConversationReference { get; set; }
+    public ConversationReference ConversationReference { get; set; }
 }

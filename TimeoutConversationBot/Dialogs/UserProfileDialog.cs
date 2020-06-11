@@ -142,7 +142,7 @@ namespace Microsoft.BotBuilderSamples
 
                 userProfile.Transport = (string)stepContext.Values["transport"];
                 userProfile.Name = (string)stepContext.Values["name"];
-                userProfile.Age = (int)stepContext.Values["age"];
+                userProfile.Age = System.Convert.ToInt32(stepContext.Values["age"]);
                 userProfile.Picture = (Attachment)stepContext.Values["picture"];
 
                 var msg = $"I have your mode of transport as {userProfile.Transport} and your name as {userProfile.Name}";

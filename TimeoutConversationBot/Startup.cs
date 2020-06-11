@@ -46,8 +46,9 @@ namespace Microsoft.BotBuilderSamples
                 CompatibilityMode = false,
             };
 
-            var storage = new CosmosDbPartitionedStorage(options);
-            services.AddSingleton<IStorage>(storage);
+            // NOTE: set timeToLiveInSeconds parameter to enable dynamically creating
+            // the container with default TTL
+            services.AddSingleton<IStorage>(CosmosDbStorageInitializer.GetStorage(options));
 
             // Create the User state. (Used in this bot's Dialog implementation.)
             services.AddSingleton<UserState>();

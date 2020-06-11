@@ -25,10 +25,10 @@ namespace TimeoutConversationBot
             _databaseId = config["CosmosDb"];
             _collectionId = config["ComosDbTimeoutContainer"];
 
-            InitializeAsync();
+            Initialize();
         }
 
-        private void InitializeAsync()
+        private void Initialize()
         {
             if (!EnsuredCreated)
             {

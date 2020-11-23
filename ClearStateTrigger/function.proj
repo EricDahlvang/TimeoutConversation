@@ -4,11 +4,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Bot.Builder" Version="4.9.3" />
-        <PackageReference Include="Microsoft.Bot.Builder.Azure" Version="4.9.3" />
-        <PackageReference Include="Microsoft.Bot.Builder.Dialogs" Version="4.9.3" />
-        <PackageReference Include="Microsoft.Bot.Schema" Version="4.9.3" />
-        <PackageReference Include="Microsoft.Bot.Connector" Version="4.9.3" />
+        <PackageReference Include="Microsoft.Bot.Builder" Version="4.11.1" />
+        <PackageReference Include="Microsoft.Bot.Builder.Azure" Version="4.11.1" />
+        <PackageReference Include="Microsoft.Bot.Builder.Dialogs" Version="4.11.1" />
+        <PackageReference Include="Microsoft.Bot.Schema" Version="4.11.1" />
+        <PackageReference Include="Microsoft.Bot.Connector" Version="4.11.1" />
         <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.2.0" />
         <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.1.2" />
     </ItemGroup>
